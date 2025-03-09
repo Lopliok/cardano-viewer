@@ -5,6 +5,8 @@ interface ApiResponse<T> {
     status: number;
 }
 
+const projectId = import.meta.env.VITE_PROJECT_ID
+
 class ApiClient {
     private baseURL: string;
 
@@ -22,6 +24,7 @@ class ApiClient {
             method,
             headers: {
                 "Content-Type": "application/json",
+                "project_id": projectId,
                 ...headers,
             },
         };
