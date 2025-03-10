@@ -29,7 +29,7 @@ const Table: React.FC<TableProps> = ({ data, render }) => {
                     {data.map((row, rowIndex) => (
                         <tr key={rowIndex} className="bg-white border-b border-gray-200">
                             {headers.map((header) => (
-                                <td key={header} className="px-6 py-2">
+                                <td key={header + rowIndex} className="px-6 py-2">
                                     {render?.(row, header) ?? row[header]}
                                 </td>
                             ))}

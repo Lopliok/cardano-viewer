@@ -8,7 +8,7 @@ function Header() {
     const onEditAddress = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        context.setState({ walletAddress: formData.get("address") as string })
+        context.setState({ walletAddress: formData.get("address") as string, stakeAddress: null, assets: undefined })
     };
 
     return (

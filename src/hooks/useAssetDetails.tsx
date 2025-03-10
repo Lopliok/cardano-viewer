@@ -25,8 +25,4 @@ export const useAssetDetails = ({ assetUnits }: { assetUnits: string[] }) => {
         assetUnits.length > 0 && !context.state.assets && loadAsset()
     }, [assetUnits])
 
-    useEffect(() => {
-        context.setState({ assets: undefined })
-    }, [context.state.walletAddress])
-
 }

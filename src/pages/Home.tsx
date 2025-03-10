@@ -20,17 +20,31 @@ function Home() {
 
 
   const loadAddressDetails = async () => {
-    const details = await apiClient.get<any>(`/addresses/${context.state.walletAddress}`)
 
-    const stakeAddress = details.data.stake_address as string
-    const amount = details.data.amount as WalletAmount
-    setWalletAssets(amount.filter(i => i.unit !== "lovelace"))
+    try {
 
-    context.setState({ stakeAddress })
+      const details = await apiClient.get<any>(`/addresses/${context.state.walletAddress}`)
+
+      const stakeAddress = details.data.stake_address as string
+      const amount = details.data.amount as WalletAmount
+      setWalletAssets(amount.filter(i => i.unit !== "lovelace"))
+
+      context.setState({ stakeAddress })
+
+
+    } catch (error) {
+
+    }
+
+
+
+
   }
 
 
   useEffect(() => {
+    setWalletAssets([])
+
     loadAddressDetails()
   }, [context.state.walletAddress])
 
@@ -40,10 +54,11 @@ function Home() {
     } else if (key === "unit") {
       return <Link className='font-semibold' to={`unit/${row[key]}`}>{(row[key] as string).slice(0, 20) + "..."}</Link>
     } else if (key === "link") {
-      return <Link className='font-semibold' to={`unit/${row[key]}`}>
-        <button type="button" className="py-2 px-5 me-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100">Asset detail</button>
-
-      </Link>
+      return (
+        <Link className='font-semibold' to={`unit/${row[key]}`}>
+          <button type="button" className="py-2 px-5 me-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100">Asset detail</button>
+        </Link>
+      )
     } else {
       return row[key]
     }
