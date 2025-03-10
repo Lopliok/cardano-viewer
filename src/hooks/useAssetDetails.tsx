@@ -1,28 +1,32 @@
 import { useEffect, useState } from "react";
 import { apiClient } from "../apiclient";
 import { AssetType } from "../types/types";
+import { useStore } from "../context/Context";
+import { AppStore } from "../context/AppStore";
 
 
 
 
-export const useAssetDetails = ({ assets }: { assets: string[] }) => {
+export const useAssetDetails = ({ assetUnits }: { assetUnits: string[] }) => {
+    const context = useStore<AppStore>()
 
-    const [assetDetails, setAssetDetails] = useState<AssetType[]>([])
 
 
     const loadAsset = async () => {
 
         try {
-            const results = await Promise.all(assets.map(asset => apiClient.get<AssetType>(`/assets/${asset}`)));
-            setAssetDetails(results.map(i => i.data))
+            const results = await Promise.all(assetUnits.map(asset => apiClient.get<AssetType>(`/assets/${asset}`)));
+            context.setState({ assets: results.map(i => i.data) })
         } catch (error) {
         }
     }
 
     useEffect(() => {
+        assetUnits.length > 0 && !context.state.assets && loadAsset()
+    }, [assetUnits])
 
-        assets && assetDetails.length == 0 && loadAsset()
-    }, [assets])
+    useEffect(() => {
+        context.setState({ assets: undefined })
+    }, [context.state.walletAddress])
 
-    return assetDetails
 }

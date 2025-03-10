@@ -4,21 +4,19 @@ import { AppStore } from '../context/AppStore'
 import { apiClient } from '../apiclient'
 import Table, { Row } from '../components/Table/Table'
 import { useAssetDetails } from '../hooks/useAssetDetails'
+import { Link } from 'react-router'
+import { convertIpfsUrl } from '../utils/utils'
 
-const convertIpfsUrl = (ipfsUrl: string): string => {
-  console.log(ipfsUrl)
-  const url = Array.isArray(ipfsUrl) ? ipfsUrl[0] : ipfsUrl
 
-  return url.replace(/^ipfs:\/\//, "https://ipfs.io/ipfs/")
-};
 
 
 type WalletAmount = { unit: string, quantity: string }[]
 
 function Home() {
   const [walletAssets, setWalletAssets] = useState<WalletAmount>([])
+  useAssetDetails({ assetUnits: walletAssets.map(i => i.unit) })
   const context = useStore<AppStore>()
-  const assets = useAssetDetails({ assets: walletAssets.map(i => i.unit) })
+
 
 
   const loadAddressDetails = async () => {
@@ -39,6 +37,13 @@ function Home() {
   const renderCell = (row: Row, key: keyof Row) => {
     if (key === "image") {
       return <img className='w-10' src={row[key] as string} />
+    } else if (key === "unit") {
+      return <Link className='font-semibold' to={`unit/${row[key]}`}>{(row[key] as string).slice(0, 20) + "..."}</Link>
+    } else if (key === "link") {
+      return <Link className='font-semibold' to={`unit/${row[key]}`}>
+        <button type="button" className="py-2 px-5 me-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100">Asset detail</button>
+
+      </Link>
     } else {
       return row[key]
     }
@@ -46,27 +51,31 @@ function Home() {
 
   const tableData = useMemo(() => {
 
-    const data = assets.map((assetData, idx) => {
+    if (!context.state.assets || walletAssets.length === 0) {
+      return []
+    }
+
+    const data = context.state.assets.map((assetData, idx) => {
+
 
       const amount = walletAssets?.[idx].quantity
       const unit = walletAssets?.[idx].unit
 
       return {
         image: convertIpfsUrl(assetData.onchain_metadata?.image ?? ""),
-        unit: unit.slice(0, 20) + "...",
+        unit: unit,
         name: assetData.onchain_metadata?.name ?? "",
-        amount
+        amount,
+        link: unit
       }
     })
     return data
-  }, [walletAssets, assets])
+  }, [walletAssets, context.state.assets])
 
 
   return (
     <>
-
       <Table render={renderCell} data={tableData} />
-
     </>
   )
 }

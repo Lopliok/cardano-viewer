@@ -5,6 +5,9 @@ interface Metadata {
     image: string;
     copyright?: string;
     mediaType?: string;
+    description?: string;
+    web?: string;
+    website?: string;
 }
 
 export interface AssetType {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useStore } from '../context/Context'
 import { AppStore } from '../context/AppStore'
 import { apiClient } from '../apiclient'
+import { AccountCard } from '../components/Card/AccountCard'
 
 
 
@@ -21,17 +22,15 @@ type AccountResponse = {
 }
 
 function Account() {
-  const [amount, setAmount] = useState<AccountResponse | null>(null)
+  const [accountDetails, setAccountDetails] = useState<AccountResponse | null>(null)
   const context = useStore<AppStore>()
 
 
   const loadAddressDetails = async () => {
     const details = await apiClient.get<AccountResponse>(`/accounts/${context.state.stakeAddress}`)
-    const stakeAddress = details.data.stake_address as string
 
-    setAmount(amount)
+    setAccountDetails(details.data)
 
-    context.setState({ stakeAddress })
   }
 
 
@@ -43,7 +42,7 @@ function Account() {
   return (
     <>
 
-      account
+      <AccountCard {...accountDetails} />
 
     </>
   )
