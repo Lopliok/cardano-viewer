@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useStore } from '../context/Context'
 import { AppStore } from '../context/AppStore'
 import Table from '../components/Table/Table'
@@ -14,7 +14,7 @@ function Units() {
       return []
     }
 
-    const data = context.state.assets.map((assetData, idx) => {
+    const data = context.state.assets.map((assetData) => {
 
 
       return {
